@@ -30,6 +30,7 @@ use skeeks\cms\shop\models\ShopProduct;
 use skeeks\cms\widgets\formInputs\selectTree\SelectTree;
 use skeeks\modules\cms\money\models\Currency;
 use skeeks\cms\exportSitemap\ExportSitemapHandler;
+use skeeks\cms\savedFilters\models\SavedFilters;
 use yii\base\Exception;
 use yii\bootstrap\Alert;
 use yii\console\Application;
@@ -52,6 +53,30 @@ use yii\web\View;
  */
 class ExportSitemapWithFiltersHandler extends ExportSitemapHandler
 {
+    public function init()
+    {
+        $this->name = \Yii::t('skeeks/exportSitemapWithFilters', 'Sitemap.xml export with filters');
+
+        if (!$this->file_path)
+        {
+            $this->file_path = "/sitemap.xml";
+        }
+
+        if (!$this->sitemaps_dir)
+        {
+            $this->sitemaps_dir = "/export/sitemaps/";
+        }
+
+        if (!$this->base_url)
+        {
+            if (!\Yii::$app instanceof Application)
+            {
+                $this->base_url = Url::base(true);
+            }
+        }
+
+        parent::init();
+    }
 
     public function export()
     {
@@ -87,6 +112,17 @@ class ExportSitemapWithFiltersHandler extends ExportSitemapHandler
             $sitemap[] = $publicUrl;
         }
 
+        $resultFilters = $this->_addAFilters($result);
+        if ($resultFilters)
+        {
+            $publiFiltercUrl = $this->generateSitemapFile('savedfilters.xml', $resultFilters);
+            $this->result->stdout("\tФайл успешно сгенерирован: {$publiFiltercUrl}\n");
+
+            $sitemap[] = $publiFiltercUrl;
+        }
+
+
+
         if ($this->content_ids)
         {
 
@@ -100,16 +136,6 @@ class ExportSitemapWithFiltersHandler extends ExportSitemapHandler
                 $sitemap = ArrayHelper::merge($sitemap, $files);
             }
         }
-
-        $resultFilters = $this->_addAFilters($result);
-        if ($resultFilters)
-        {
-            $publiFiltercUrl[] = $this->generateSitemapFile('.xml', $resultFilters);
-            $this->result->stdout("\tФайл успешно сгенерирован: {$publiFiltercUrl}\n");
-
-            $sitemap = ArrayHelper::merge($sitemap, $publiFiltercUrl);
-        }
-
 
         if ($sitemap)
         {
@@ -140,13 +166,12 @@ class ExportSitemapWithFiltersHandler extends ExportSitemapHandler
                 throw new Exception("\t\tНе удалось создать файл");
             }
         }
-
         return $this->result;
     }
 
     /**
      * @param array $data
-     * @return $this
+     * @return array
      */
     protected function _addAFilters(&$data = [])
     {
@@ -158,15 +183,15 @@ class ExportSitemapWithFiltersHandler extends ExportSitemapHandler
              */
             foreach ($filters as $filter)
             {
-                $data[] =
+
+                $result[] =
                     [
                         "loc"           => $filter->getUrl(true),
                         "lastmod"       => $this->_lastMod($filter),
                     ];
             }
         }
-
-        return $this;
+        return $result;
     }
 
 
