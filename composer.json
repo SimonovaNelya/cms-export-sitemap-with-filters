@@ -1,0 +1,34 @@
+{
+    "name": "skeeks/cms-export-sitemap",
+    "description": "Export data from the site on SkeekS CMS",
+    "keywords": ["module", "cms", "skeeks", "sx", "app", "yii2", "export"],
+    "homepage": "http://www.skeeks.com/",
+    "type": "yii2-extension",
+    "license": "GPL-3.0+",
+    "support": {
+        "issues": "http://cms.skeeks.com",
+        "source": "https://github.com/skeeks-cms/cms-export-sitemap-with-filters"
+    },
+    "authors": [
+        {
+            "name": "Simonova Nelya",
+            "email": "nelya@rusoft.com"
+        }
+    ],
+    "require": {
+        "skeeks/cms-export": "*",
+        "skeeks/cms-export-sitemap": "*"
+
+    },
+    "autoload": {
+        "psr-4": {
+            "skeeks\\cms\\exportSitemapWithFilters\\": "src/"
+        }
+    },
+    "extra": {
+        "config-plugin": {
+            "web": "src/config/main.php",
+            "console": "src/config/main-console.php"
+        }
+    }
+}
