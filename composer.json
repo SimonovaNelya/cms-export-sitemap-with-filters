@@ -1,5 +1,5 @@
 {
-    "name": "skeeks/cms-export-sitemap",
+    "name": "skeeks/cms-export-sitemap-with-filters",
     "description": "Export data from the site on SkeekS CMS",
     "keywords": ["module", "cms", "skeeks", "sx", "app", "yii2", "export"],
     "homepage": "http://www.skeeks.com/",
